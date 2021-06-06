@@ -1,0 +1,14 @@
+.field-group {
+  padding: 8px 20px;
+  display: flex;
+}
+
+.field-item {
+  margin-right: 24px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.input {
+  margin-right: 8px;
+}
