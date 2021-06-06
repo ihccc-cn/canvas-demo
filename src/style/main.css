@@ -10,7 +10,17 @@ body {
 h4 {
   border-left: 8px solid #2196f3;
   padding: 8px 0;
-  text-indent: 2em;
+  text-indent: 20px;
+}
+
+a {
+  display: block;
+  color: #333;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #2e5bbd;
 }
 
 #root {
@@ -19,6 +29,11 @@ h4 {
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
+}
+
+.close {
+  margin-right: 20px;
+  float: right;
 }
 
 .soft {
@@ -33,7 +48,7 @@ h4 {
 
 .card {
   margin: 20px auto;
-  padding: 8px;
+  padding: 20px;
   overflow: hidden;
 }
 
@@ -58,8 +73,6 @@ h4 {
 
 .menu-item a {
   color: #fff;
-  display: block;
-  text-decoration: none;
 }
 
 .menu-item:hover {

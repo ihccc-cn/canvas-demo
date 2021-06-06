@@ -1,15 +1,43 @@
+function Input(opts) {
+  const { label, name, value = "", max = 255 } = opts;
+
+  const dom = [
+    "<div class='field-item'>",
+    "<label class='field-wrapper full'>",
+    label ? `<span>${label}</span>` : "",
+    `
+      <input
+        class='input'
+        type='text'
+        name='${name}'
+        value='${value}'
+        max='${max}'
+      />
+    `,
+    "</label>",
+    "</div>",
+  ].join("");
+
+  return { dom };
+}
+
 function Radio(opts) {
   const { label, name, value, options } = opts;
 
   const dom = [
     "<div class='field-item'>",
-    label ? `<span>${label}</span>` : "",
+    label ? `<label for='${name}'>${label}</label>` : "",
     options
       .map(
         (item) =>
-          `<label class='field-wrapper'><input class='input' type='radio' name='${name}' value='${
-            item.value
-          }' ${value === item.value ? "checked" : ""}/>${item.label}</label>`
+          `<label class='field-wrapper'>
+            <input
+              class='input'
+              type='radio' 
+              name='${name}'
+              value='${item.value}' 
+              ${value === item.value ? "checked" : ""}
+            />${item.label}</label>`
       )
       .join(""),
     "</div>",
@@ -21,22 +49,26 @@ function Radio(opts) {
 function Silder(opts) {
   const { label, name, value = 0, min = 0, max = 10, step = 1 } = opts;
 
-  let val = value;
-
-  function setValue(v) {
-    val = v;
-  }
-
   const dom = [
     "<div class='field-item'>",
-    label ? `<span>${label}</span>` : "",
     "<label class='field-wrapper full'>",
-    `<input class='input' type='range' name='${name}' value='${val}' min='${min}' max='${max}' step='${step}'/><b>${val}</b>`,
+    label ? `<span>${label}</span>` : "",
+    `
+      <input 
+        class='input'
+        type='range'
+        name='${name}'
+        value='${value}'
+        min='${min}'
+        max='${max}'
+        step='${step}'
+      /><b>${value}</b>
+    `,
     "</label>",
     "</div>",
   ].join("");
 
-  return { dom, setValue };
+  return { dom };
 }
 
 function Group(title, components) {
@@ -63,21 +95,53 @@ function appendTo(target) {
   Control.target = target;
 }
 
+function forEach(arr, callback) {
+  for (let i = 0; i < arr.length; i++) callback(arr[i], i, arr);
+}
+
 class Control {
   static target = null;
   static Content = Content;
   static Group = Group;
+  static Input = Input;
   static Radio = Radio;
   static Silder = Silder;
   static appendTo = appendTo;
   constructor(components) {
-    this.components = components.filter(
+    const correctDom = components.filter(
       (item) => typeof item === "object" && typeof item.dom === "string"
     );
+
+    this.signle = correctDom.filter((item) => !item.title);
+    this.group = correctDom.filter((item) => !!item.title);
+
+    this.container = null;
+    this.fields = [];
+
     this.active = 0;
 
     this.changeCallback = null;
     this.render();
+  }
+
+  setValue(values) {
+    if (this.fields.length === 0) return;
+
+    forEach(this.fields, function (item) {
+      if (item.name in values && values[item.name] !== null) {
+        if (item.type === "radio") {
+          item.checked = item.value === values[item.name];
+        } else {
+          item.value = values[item.name];
+        }
+
+        if (item.type === "range") {
+          item.nextSibling.innerText = item.value;
+        }
+      }
+    });
+
+    return this;
   }
 
   onChange(func) {
@@ -86,25 +150,18 @@ class Control {
     }
   }
 
-  forEach(arr, callback) {
-    for (let i = 0; i < arr.length; i++) callback(arr[i], i, arr);
-  }
-
   renderGroupTitle = (item, index) =>
-    `<div class='field-group-title ${index === 0 ? "active soft inset" : ""}'>${item.title}</div>`;
+    `<div class='field-group-title ${index === 0 ? "active soft inset" : ""}'>${
+      item.title
+    }</div>`;
 
   render() {
-    const _this = this;
-
-    const signle = this.components.filter((item) => !item.title);
-    const group = this.components.filter((item) => !!item.title);
-
     const controlsDom = [
-      signle.map((item) => item.dom).join(""),
+      this.signle.map((item) => item.dom).join(""),
       '<div class="field-group-head">',
-      group.map(_this.renderGroupTitle).join(""),
+      this.group.map(this.renderGroupTitle).join(""),
       "</div>",
-      group
+      this.group
         .map((item, index) => {
           if (index === 0) return item.dom;
           return item.dom.replace("style=''", "style='display: none;'");
@@ -112,25 +169,33 @@ class Control {
         .join(""),
     ].join("");
 
-    const container = document.createElement("div");
-    container.setAttribute("class", "card soft");
-    container.innerHTML = controlsDom;
-    Control.target.appendChild(container);
+    this.container = document.createElement("div");
+    this.container.setAttribute("class", "card soft");
+    this.container.innerHTML = controlsDom;
+    Control.target.appendChild(this.container);
 
+    this.fields = this.container.getElementsByTagName("input");
+
+    this.addEvent();
+  }
+
+  addEvent() {
+    const _this = this;
     // 给 input 绑定事件
-    const fields = container.getElementsByTagName("input");
-
-    _this.forEach(fields, function (item) {
+    forEach(this.fields, function (item) {
       item.onchange = function (e) {
         _this.changeCallback(e.target.name, e.target.value);
-        e.target.nextSibling.innerText = e.target.value;
+        if (e.target.type === "range") {
+          e.target.nextSibling.innerText = e.target.value;
+        }
       };
     });
 
-    const groupTitle = container.getElementsByClassName("field-group-title");
-    const groupBody = container.getElementsByClassName("field-group");
+    const groupTitle =
+      this.container.getElementsByClassName("field-group-title");
+    const groupBody = this.container.getElementsByClassName("field-group");
 
-    _this.forEach(groupTitle, function (item, index) {
+    forEach(groupTitle, function (item, index) {
       item.onclick = function () {
         if (_this.active === index) return;
         groupTitle[_this.active].className = "field-group-title";
