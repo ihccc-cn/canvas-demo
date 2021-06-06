@@ -1,11 +1,4 @@
-import {
-  changeTitle,
-  initCanvas,
-  clearCanvas,
-  Size,
-  trig,
-  loop,
-} from "../../_utils";
+import { changeTitle, initCanvas, clearCanvas, Size, trig, loop } from "../../_utils";
 
 const sin = Math.sin;
 const cos = Math.cos;

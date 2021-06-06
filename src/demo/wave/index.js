@@ -44,25 +44,36 @@ function coorSystem({ point, xLength = 100, yLength = 100 }) {
   ctx.arc(point.x, point.y - yLength / 2, 4, 0, Math.PI * 2);
   ctx.closePath();
   ctx.fill();
+
+  ctx.font = "18px Verdana";
+  ctx.fillText("0", point.x - 16, point.y + 20);
+
+  ctx.fillText("x", point.x + xLength / 2, point.y + 24);
+  ctx.fillText("y", point.x + 16, point.y - yLength / 2);
 }
 
 function wave() {
-  changeTitle("正弦函数曲线");
+  changeTitle("三角函数曲线");
   const { CNAVAS_SIZE, CANVAS_CENTER, ctx } = initCanvas();
 
   const canvasSize = Size(CNAVAS_SIZE);
 
-  // 创建坐标系
-  const CoorSystemCanvas = createOffScreenCanvas(canvasSize);
-  const yuandian = Point(CANVAS_CENTER, CANVAS_CENTER);
-  CoorSystemCanvas.render(coorSystem, {
-    point: yuandian,
-    xLength: CNAVAS_SIZE - 100,
-    yLength: CNAVAS_SIZE - 100,
-  });
-
   const ONECYCLE = Math.PI * 2;
   const count = ONECYCLE / 100; // x 增量
+
+  let data = {
+    method: "sin",
+    a: 2,
+    w: 1,
+    d: 0,
+    k: 0,
+    zoom_x: 100 / ONECYCLE,
+    zoom_y: 10,
+  };
+
+  // 创建坐标系
+  const CoorSystemCanvas = createOffScreenCanvas(canvasSize);
+  const origin = Point(CANVAS_CENTER, CANVAS_CENTER);
 
   // x 起点
   const x0 = {
@@ -78,6 +89,11 @@ function wave() {
   };
 
   function renderCoorSystem() {
+    CoorSystemCanvas.render(coorSystem, {
+      point: origin,
+      xLength: CNAVAS_SIZE - 100,
+      yLength: CNAVAS_SIZE - 100,
+    });
     ctx.drawImage(CoorSystemCanvas, 0, 0);
   }
 
@@ -89,9 +105,8 @@ function wave() {
     ctx.beginPath();
     for (let i = x0.val; i <= x1.val; i += count) {
       let x = i;
-      let y = trig.sin({ A: 2, W: ONECYCLE / 4, X: x, D: 0, K: 0 }, 2);
-      ctx[i === x0.x ? "moveTo" : "lineTo"](to(x, 100 / ONECYCLE), to(y, 10));
-      // console.log(x, y, to(x, 100 / ONECYCLE), to(y, 10));
+      let y = trig[data.method]({ A: data.a, W: data.w, X: x, D: data.d, K: data.k }, 2);
+      ctx[i === x0.x ? "moveTo" : "lineTo"](to(x, data.zoom_x), to(y, data.zoom_y));
     }
     ctx.stroke();
     ctx.closePath();
@@ -107,29 +122,52 @@ function wave() {
 
   render();
 
-  // loop(render);
+  loop(render);
 
   new Control([
     Control.Radio({
-      label: "函数名称：",
-      value: "sin",
+      label: "函数：",
+      name: "method",
+      value: data.method,
       options: [
-        { label: "sin", value: "sin" },
-        { label: "cos", value: "cos" },
+        { label: "y=Asin(ωx+φ)+k", value: "sin" },
+        { label: "y=Acos(ωx+φ)+k", value: "cos" },
       ],
     }),
-    Control.Silder({ label: "A：", type: "silder", value: 1 }),
-    // Control.Silder({ label: 'W：', type: 'silder', value: 1 }),
-    // Control.Silder({ label: 'D：', type: 'silder', value: 1 }),
-    // Control.Silder({ label: 'K：', type: 'silder', value: 1 }),
-    // Control.Group('调整参数', [
-    //   Control.Silder({ label: 'A：', type: 'silder', value: 1 }),
-    //   Control.Silder({ label: 'W：', type: 'silder', value: 1 }),
-    //   Control.Silder({ label: 'D：', type: 'silder', value: 1 }),
-    //   Control.Silder({ label: 'K：', type: 'silder', value: 1 }),
-    // ]),
+    Control.Group("调整参数", [
+      Control.Silder({ label: "A：", name: "a", type: "silder", value: data.a }),
+      Control.Silder({
+        label: "ω：",
+        name: "w",
+        type: "silder",
+        value: data.w,
+        min: -6,
+        max: 6,
+        step: 0.5,
+      }),
+      Control.Silder({ label: "φ：", name: "d", type: "silder", value: data.d }),
+      Control.Silder({ label: "k：", name: "k", type: "silder", value: data.k, min: -10 }),
+    ]),
+    Control.Group("坐标系", [
+      Control.Silder({
+        label: "X 轴比例：",
+        name: "zoom_x",
+        type: "silder",
+        value: data.zoom_x,
+        min: 1,
+        max: 100,
+      }),
+      Control.Silder({
+        label: "Y 轴比例：",
+        name: "zoom_y",
+        type: "silder",
+        value: data.zoom_y,
+        min: 1,
+        max: 100,
+      }),
+    ]),
   ]).onChange((name, value) => {
-    console.log(name, value);
+    data[name] = value;
   });
 }
 

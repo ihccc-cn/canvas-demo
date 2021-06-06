@@ -1,3 +1,5 @@
+import clearCanvas from "./clearCanvas";
+
 function createOffScreenCanvas(size) {
   const canvas = document.createElement("canvas");
   canvas.width = size.width;
@@ -6,6 +8,7 @@ function createOffScreenCanvas(size) {
   const context = canvas.getContext("2d");
 
   canvas.render = function render(fn, ...args) {
+    clearCanvas.call(context, size);
     typeof fn === "function" && fn.call(context, ...args);
   };
 

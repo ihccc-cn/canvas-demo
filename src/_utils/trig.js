@@ -7,7 +7,7 @@ function toShake(num, precision = -1) {
 }
 
 /**
- * A * sin(W * X + D) + K
+ * A * sin(ω * X + φ) + K
  * @param {number} A [1] 振幅，范围 [-A, A]
  * @param {number} W [1] 角速度
  * @param {number} X [0] 因变量
@@ -17,11 +17,13 @@ function toShake(num, precision = -1) {
  * @returns
  */
 function sinFn({ A = 1, W = 1, X = 0, D = 0, K = 0 }, precision = -1) {
+  D = +D;
+  K = +K;
   return toShake(A * Math.sin(W * X + D) + K, precision);
 }
 
 /**
- * A * cos(W * X + D) + K
+ * A * cos(ω * X + φ) + K
  * @param {number} A [1] 振幅，范围 [-A, A]
  * @param {number} W [1] 角速度
  * @param {number} X [0] 因变量
@@ -31,6 +33,8 @@ function sinFn({ A = 1, W = 1, X = 0, D = 0, K = 0 }, precision = -1) {
  * @returns
  */
 function cosFn({ A = 1, W = 1, X = 0, D = 0, K = 0 }, precision = -1) {
+  D = +D;
+  K = +K;
   return toShake(A * Math.cos(W * X + D) + K, precision);
 }
 

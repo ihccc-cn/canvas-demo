@@ -1,14 +1,51 @@
+.field-group-head {
+  margin-top: 8px;
+  padding-left: 12px;
+  display: flex;
+}
+
+.field-group-title {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+  font-size: 14px;
+}
+
+.field-group-title.active {
+  color: #0075ff;
+  font-weight: bold;
+}
+
 .field-group {
+  background-color: #f1f1f1;
+  padding: 12px 0;
+}
+
+.field-item {
   padding: 8px 20px;
   display: flex;
 }
 
-.field-item {
+.field-item span {
+  flex: none;
+}
+
+.field-wrapper {
+  cursor: pointer;
   margin-right: 24px;
   display: inline-flex;
   align-items: center;
 }
 
+.field-wrapper.full {
+  width: 100%;
+  margin-right: 0;
+}
+
 .input {
   margin-right: 8px;
+}
+
+.input[type="range"] {
+  flex: 1;
 }

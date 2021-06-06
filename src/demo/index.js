@@ -1,2 +1,2 @@
-export { default as p1 } from "./p1";
+export { default as particle_cycle } from "./particle_cycle";
 export { default as wave } from "./wave";
