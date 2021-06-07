@@ -1,22 +1,19 @@
-import { changeTitle, initCanvas, clearCanvas, Size, trig, loop } from "../../_utils";
+import { initCanvas, clearCanvas, trig, loop } from "../../_utils";
 
 const sin = Math.sin;
 const cos = Math.cos;
 
 function main() {
-  changeTitle("粒子圆环效果");
-  const { CNAVAS_SIZE, CANVAS_CENTER, ctx } = initCanvas();
-
-  const canvasSize = Size(CNAVAS_SIZE);
+  const { CNAVAS_SIZE, CANVAS_CENTER, ctx } = initCanvas({ title: "粒子圆环效果" });
 
   const ONECYCLE = Math.PI * 2; // 一个周期 360 度 即 2π
 
-  const radius = 120; // 最内圆环半径
+  const radius = 100; // 最内圆环半径
   const cycleSize = 100; // 单个圆环粒子数量
   const particleSize = cycleSize * 10; // 总计粒子数量
-  const sr = 4; // 粒子半径
-  const circleDistance = 6; // 圆环半径间隔
-  const rotateSpeed = ONECYCLE / 360 / 6; // 粒子旋转速度
+  const sr = 6; // 粒子半径
+  const circleDistance = 8; // 圆环半径间隔
+  const rotateSpeed = ONECYCLE / 360; // 粒子旋转速度
 
   let count = 0;
 
@@ -41,10 +38,10 @@ function main() {
 
       let r = sr; // 当前粒子半径
 
-      r = trig.sin({ A: sr, W: cdx, X: offsetAngel }, 0);
+      r = Math.abs(trig.sin({ A: sr, W: Math.PI * 0.06, X: offsetAngel * 6 + pdx + cdx }, 0));
 
-      let x = CANVAS_CENTER + circleRadius * cos(θ * pdx + offsetAngel);
-      let y = CANVAS_CENTER + circleRadius * sin(θ * pdx + offsetAngel);
+      let x = CANVAS_CENTER.x + circleRadius * cos(θ * pdx + offsetAngel);
+      let y = CANVAS_CENTER.y + circleRadius * sin(θ * pdx + offsetAngel);
 
       // x = trig.sin({ A: x, W: ONECYCLE / pdx / 6, X: offsetAngel, D: 0 }, 0);
       // y = trig.cos({ A: y, W: ONECYCLE / pdx / 6, X: offsetAngel, D: 0 }, 0);
@@ -60,7 +57,7 @@ function main() {
     count++;
     offsetAngel += rotateSpeed;
 
-    clearCanvas.call(ctx, canvasSize);
+    clearCanvas.call(ctx, CNAVAS_SIZE);
     renderCircle();
   }
 

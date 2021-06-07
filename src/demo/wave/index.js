@@ -1,26 +1,14 @@
 import TWEEN from "@tweenjs/tween.js";
 import coorSystem from "./coorSystem";
 import getControlPanel from "./getControlPanel";
-import {
-  changeTitle,
-  initCanvas,
-  createOffScreenCanvas,
-  clearCanvas,
-  trig,
-  Size,
-  Point,
-  loop,
-} from "../../_utils";
+import { initCanvas, createOffScreenCanvas, clearCanvas, trig, loop } from "../../_utils";
 
 function to(number, s) {
   return number * s;
 }
 
 function main() {
-  changeTitle("三角函数曲线");
-  const { CNAVAS_SIZE, CANVAS_CENTER, ctx } = initCanvas();
-
-  const canvasSize = Size(CNAVAS_SIZE);
+  const { CNAVAS_SIZE, CANVAS_CENTER, ctx } = initCanvas({ title: "三角函数曲线" });
 
   const ONECYCLE = Math.PI * 2;
   const count = ONECYCLE / 100; // x 增量
@@ -38,14 +26,13 @@ function main() {
   };
 
   // 创建坐标系
-  const CoorSystemCanvas = createOffScreenCanvas(canvasSize);
-  const origin = Point(CANVAS_CENTER, CANVAS_CENTER);
+  const CoorSystemCanvas = createOffScreenCanvas(CNAVAS_SIZE);
 
   function renderCoorSystem() {
     CoorSystemCanvas.render(coorSystem, {
-      point: origin,
-      xLength: CNAVAS_SIZE - 100,
-      yLength: CNAVAS_SIZE - 100,
+      origin: CANVAS_CENTER,
+      xLength: CNAVAS_SIZE.width - 100,
+      yLength: CNAVAS_SIZE.height - 100,
       zoom_x: data.zoom_x,
       zoom_y: data.zoom_y,
     });
@@ -53,7 +40,7 @@ function main() {
   }
 
   function renderFunc() {
-    ctx.translate(CANVAS_CENTER, CANVAS_CENTER);
+    ctx.translate(CANVAS_CENTER.x, CANVAS_CENTER.y);
     ctx.save();
     ctx.strokeStyle = "#f00";
     ctx.lineWidth = 4;
@@ -66,11 +53,11 @@ function main() {
     ctx.stroke();
     ctx.closePath();
     ctx.restore();
-    ctx.translate(-CANVAS_CENTER, -CANVAS_CENTER);
+    ctx.translate(-CANVAS_CENTER.x, -CANVAS_CENTER.y);
   }
 
   function render(tick) {
-    clearCanvas.call(ctx, canvasSize);
+    clearCanvas.call(ctx, CNAVAS_SIZE);
     renderCoorSystem();
     renderFunc();
 
