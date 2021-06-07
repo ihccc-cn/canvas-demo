@@ -16,7 +16,7 @@ function to(number, s) {
   return number * s;
 }
 
-function wave() {
+function main() {
   changeTitle("三角函数曲线");
   const { CNAVAS_SIZE, CANVAS_CENTER, ctx } = initCanvas();
 
@@ -95,4 +95,4 @@ function wave() {
     });
 }
 
-export default wave;
+export default main;

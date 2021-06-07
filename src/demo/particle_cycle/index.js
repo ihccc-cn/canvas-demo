@@ -3,7 +3,7 @@ import { changeTitle, initCanvas, clearCanvas, Size, trig, loop } from "../../_u
 const sin = Math.sin;
 const cos = Math.cos;
 
-function p1() {
+function main() {
   changeTitle("粒子圆环效果");
   const { CNAVAS_SIZE, CANVAS_CENTER, ctx } = initCanvas();
 
@@ -69,4 +69,4 @@ function p1() {
   loop(render);
 }
 
-export default p1;
+export default main;
