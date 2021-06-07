@@ -1,14 +1,5 @@
-function coorSystem({
-  point,
-  xLength = 100,
-  yLength = 100,
-  zoom_x = 10,
-  zoom_y = 10,
-}) {
+function coorSystem({ point, xLength = 100, yLength = 100, zoom_x = 10, zoom_y = 10 }) {
   const ctx = this;
-
-  zoom_x = +zoom_x;
-  zoom_y = +zoom_y;
 
   ctx.lineWidth = 2;
   ctx.strokeStyle = "#c9c9c9";

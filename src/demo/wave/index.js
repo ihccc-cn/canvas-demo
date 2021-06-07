@@ -1,3 +1,4 @@
+import TWEEN from "@tweenjs/tween.js";
 import coorSystem from "./coorSystem";
 import getControlPanel from "./getControlPanel";
 import {
@@ -26,12 +27,12 @@ function wave() {
 
   let data = {
     method: "sin",
-    a: 2,
+    a: 4,
     w: 1,
     d: 0,
     k: 0,
-    zoom_x: 100 / ONECYCLE,
-    zoom_y: 10,
+    zoom_x: 16,
+    zoom_y: 16,
     x0: -2,
     x1: 2,
   };
@@ -59,14 +60,8 @@ function wave() {
     ctx.beginPath();
     for (let i = data.x0 * Math.PI; i <= data.x1 * Math.PI; i += count) {
       let x = i;
-      let y = trig[data.method](
-        { A: data.a, W: data.w, X: x, D: data.d, K: data.k },
-        2
-      );
-      ctx[i === data.x0 * Math.PI ? "moveTo" : "lineTo"](
-        to(x, data.zoom_x),
-        to(y, data.zoom_y)
-      );
+      let y = trig[data.method]({ A: data.a, W: data.w, X: x, D: data.d * Math.PI, K: data.k }, 2);
+      ctx[i === data.x0 * Math.PI ? "moveTo" : "lineTo"](to(x, data.zoom_x), to(y, data.zoom_y));
     }
     ctx.stroke();
     ctx.closePath();
@@ -74,20 +69,29 @@ function wave() {
     ctx.translate(-CANVAS_CENTER, -CANVAS_CENTER);
   }
 
-  function render() {
+  function render(tick) {
     clearCanvas.call(ctx, canvasSize);
     renderCoorSystem();
     renderFunc();
-  }
 
-  render();
+    TWEEN.update(tick);
+  }
 
   loop(render);
 
   getControlPanel()
     .setValue(data)
     .onChange((name, value) => {
-      data[name] = value;
+      if (name === "method") {
+        data[name] = value;
+        data.x1 = data.x0;
+        new TWEEN.Tween(data).easing(TWEEN.Easing.Quadratic.InOut).to({ x1: 2 }, 1500).start();
+      } else {
+        new TWEEN.Tween(data)
+          .easing(TWEEN.Easing.Quadratic.InOut)
+          .to({ [name]: +value }, 1500)
+          .start();
+      }
     });
 }
 

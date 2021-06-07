@@ -20,13 +20,16 @@ function getControlPanel() {
       Silder({
         label: "ω：",
         name: "w",
-        min: -6,
-        max: 6,
-        step: 0.5,
+        min: -4,
+        max: 4,
+        step: 0.1,
       }),
       Silder({
-        label: "φ：",
+        label: "φ（π）：",
         name: "d",
+        min: -4,
+        max: 4,
+        step: 0.5,
       }),
       Silder({
         label: "k：",
