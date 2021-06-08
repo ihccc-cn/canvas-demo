@@ -1,4 +1,5 @@
 export default [
-  { name: "三角函数曲线", path: "/wave" },
-  { name: "粒子圆环效果", path: "/particle_cycle" },
+  "三角函数曲线:/trigonometric-function",
+  "粒子圆环效果:/particle-cycle",
+  "旋转粒子波纹:/rotate-ripple",
 ];

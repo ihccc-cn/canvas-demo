@@ -13,7 +13,7 @@ function main() {
   const ONECYCLE = Math.PI * 2;
   const count = ONECYCLE / 100; // x 增量
 
-  let data = {
+  let state = {
     method: "sin",
     a: 4,
     w: 1,
@@ -33,8 +33,8 @@ function main() {
       origin: CANVAS_CENTER,
       xLength: CNAVAS_SIZE.width - 100,
       yLength: CNAVAS_SIZE.height - 100,
-      zoom_x: data.zoom_x,
-      zoom_y: data.zoom_y,
+      zoom_x: state.zoom_x,
+      zoom_y: state.zoom_y,
     });
     ctx.drawImage(CoorSystemCanvas, 0, 0);
   }
@@ -45,10 +45,13 @@ function main() {
     ctx.strokeStyle = "#f00";
     ctx.lineWidth = 4;
     ctx.beginPath();
-    for (let i = data.x0 * Math.PI; i <= data.x1 * Math.PI; i += count) {
+    for (let i = state.x0 * Math.PI; i <= state.x1 * Math.PI; i += count) {
       let x = i;
-      let y = trig[data.method]({ A: data.a, W: data.w, X: x, D: data.d * Math.PI, K: data.k }, 2);
-      ctx[i === data.x0 * Math.PI ? "moveTo" : "lineTo"](to(x, data.zoom_x), to(y, data.zoom_y));
+      let y = trig[state.method](
+        { A: state.a, W: state.w, X: x, D: state.d * Math.PI, K: state.k },
+        2
+      );
+      ctx[i === state.x0 * Math.PI ? "moveTo" : "lineTo"](to(x, state.zoom_x), to(y, state.zoom_y));
     }
     ctx.stroke();
     ctx.closePath();
@@ -67,14 +70,14 @@ function main() {
   loop(render);
 
   getControlPanel()
-    .setValue(data)
+    .setValue(state)
     .onChange((name, value) => {
       if (name === "method") {
-        data[name] = value;
-        data.x1 = data.x0;
-        new TWEEN.Tween(data).easing(TWEEN.Easing.Quadratic.InOut).to({ x1: 2 }, 1500).start();
+        state[name] = value;
+        state.x1 = state.x0;
+        new TWEEN.Tween(state).easing(TWEEN.Easing.Quadratic.InOut).to({ x1: 2 }, 1500).start();
       } else {
-        new TWEEN.Tween(data)
+        new TWEEN.Tween(state)
           .easing(TWEEN.Easing.Quadratic.InOut)
           .to({ [name]: +value }, 1500)
           .start();

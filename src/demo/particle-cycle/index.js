@@ -15,8 +15,6 @@ function main() {
   const circleDistance = 8; // 圆环半径间隔
   const rotateSpeed = ONECYCLE / 360; // 粒子旋转速度
 
-  let count = 0;
-
   // ctx.globalCompositeOperation = "lighter";
   // ctx.strokeStyle = "#ff0000";
   ctx.fillStyle = "#ffffff";
@@ -38,7 +36,9 @@ function main() {
 
       let r = sr; // 当前粒子半径
 
-      r = Math.abs(trig.sin({ A: sr, W: Math.PI * 0.06, X: offsetAngel * 6 + pdx + cdx }, 0));
+      r = Math.abs(
+        trig.sin({ A: sr, W: Math.PI * 0.06 + cdx / 2000, X: offsetAngel * 6 + pdx }, 0)
+      );
 
       let x = CANVAS_CENTER.x + circleRadius * cos(θ * pdx + offsetAngel);
       let y = CANVAS_CENTER.y + circleRadius * sin(θ * pdx + offsetAngel);
@@ -54,14 +54,11 @@ function main() {
   }
 
   function render() {
-    count++;
     offsetAngel += rotateSpeed;
 
     clearCanvas.call(ctx, CNAVAS_SIZE);
     renderCircle();
   }
-
-  render();
 
   loop(render);
 }

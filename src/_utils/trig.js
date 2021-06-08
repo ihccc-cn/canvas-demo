@@ -1,10 +1,4 @@
-function toShake(num, precision = -1) {
-  if (precision > -1) {
-    const pre = 10 ** precision;
-    num = Math.round(num * pre) / pre;
-  }
-  return num;
-}
+import m from "./m";
 
 /**
  * A * sin(ω * X + φ) + K
@@ -19,7 +13,7 @@ function toShake(num, precision = -1) {
 function sinFn({ A = 1, W = 1, X = 0, D = 0, K = 0 }, precision = -1) {
   D = +D;
   K = +K;
-  return toShake(A * Math.sin(W * X + D) + K, precision);
+  return m.float(A * Math.sin(W * X + D) + K, precision);
 }
 
 /**
@@ -35,7 +29,7 @@ function sinFn({ A = 1, W = 1, X = 0, D = 0, K = 0 }, precision = -1) {
 function cosFn({ A = 1, W = 1, X = 0, D = 0, K = 0 }, precision = -1) {
   D = +D;
   K = +K;
-  return toShake(A * Math.cos(W * X + D) + K, precision);
+  return m.float(A * Math.cos(W * X + D) + K, precision);
 }
 
 const Trig = {

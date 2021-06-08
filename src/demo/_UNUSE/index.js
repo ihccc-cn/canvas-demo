@@ -1,9 +1,10 @@
-import { changeTitle, initCanvas } from "../../_utils";
+import { initCanvas } from "../../_utils";
 
-function _UNUSE() {
-  changeTitle("未使用标题");
-  const { CNAVAS_SIZE, CANVAS_CENTER, canvas, ctx } = initCanvas();
+function main() {
+  const { CNAVAS_SIZE, CANVAS_CENTER, canvas, ctx } = initCanvas({
+    title: "圆环粒子效果",
+  });
   console.log(CNAVAS_SIZE, CANVAS_CENTER, canvas, ctx);
 }
 
-export default _UNUSE;
+export default main;

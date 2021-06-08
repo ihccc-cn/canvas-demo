@@ -1,2 +1,4 @@
-export { default as particle_cycle } from "./particle_cycle";
-export { default as wave } from "./wave";
+export { default as trigonometric_function } from "./trigonometric-function";
+
+export { default as particle_cycle } from "./particle-cycle";
+export { default as rotate_ripple } from "./rotate-ripple";

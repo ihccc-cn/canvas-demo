@@ -6,7 +6,11 @@ const root = document.getElementById("root");
 
 Control.appendTo(root);
 
-const name = window.location.pathname.split("/")[1];
+const name = window.location.pathname.split("/")[1].replace("-", "_");
+
+function renderRouteItem(item) {
+  return `<div class="menu-item"><a href='${item.path}'>${item.name || "未知名称"}</a></div>`;
+}
 
 if (!!name && demo.hasOwnProperty(name)) {
   root.innerHTML = `
@@ -23,12 +27,13 @@ if (!!name && demo.hasOwnProperty(name)) {
     '<h4 class="soft">导航</h4>',
     '<div class="card soft">',
     routes
-      .map(
-        (item) =>
-          `<div class="menu-item">
-            <a href='${item.path}'>${item.name || "未知名称"}</a>
-          </div>`
-      )
+      .map((item) => {
+        if (typeof item === "string") {
+          const [name, path] = item.split(":");
+          return renderRouteItem({ name, path });
+        }
+        return renderRouteItem(item);
+      })
       .join(""),
     "</div>",
   ].join("");
