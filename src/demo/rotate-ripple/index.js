@@ -4,8 +4,16 @@ const ONECYCLE = 2 * Math.PI;
 
 // 绘制波纹
 function renderRipple(opts) {
-  const { origin, repeat = 10, A_distance = 16, radius = 2, rotate = 0, w = 0.02 } = opts;
-  let step = opts.step || 4;
+  const {
+    origin,
+    repeat = 10,
+    A_distance = 16,
+    radius = 2,
+    rotate = 0,
+    w = 0.02,
+    step = 4,
+    offset = 0,
+  } = opts;
   const ctx = this;
 
   ctx.translate(origin.x, origin.y);
@@ -13,12 +21,13 @@ function renderRipple(opts) {
   for (let i = 1; i <= repeat; i++) {
     ctx.fillStyle = "#fff";
     for (let x = -ONECYCLE / w / 4; x <= ONECYCLE / w / 4; x += step) {
-      let y = trig.sin({ A: A_distance * i, W: w, X: x, D: -ONECYCLE / 4 }, 0);
+      let y = trig.sin({ A: A_distance * i, W: w, X: x + offset, D: -ONECYCLE / 4 }, 0);
       ctx.fillRect(x, y, radius, radius);
     }
-    step -= 0.1;
   }
   ctx.translate(-origin.x, -origin.y);
+
+  // console.log(opts);
 }
 
 function main() {
@@ -37,9 +46,10 @@ function main() {
   }
 
   const state = {
-    num: 8,
+    num: 10,
     circleRadius: 80,
     ripples: [],
+    offset: 0,
   };
 
   for (let angle = 0; angle < state.num; angle++) {
@@ -52,29 +62,40 @@ function main() {
       repeat: m.random(5, 10),
       A_distance: m.random(10, 20),
       w: m.random(0.02, 0.03, 4),
-      rotateSpeed: m.random(ONECYCLE / 2400, ONECYCLE / 1800, 4),
+      // rotateSpeed: m.random(ONECYCLE / 2400, ONECYCLE / 1800, 4),
     });
   }
-
-  state.ripples.forEach((ripple) => {
-    ripple.canvas.render(renderRipple, ripple);
-  });
 
   function render() {
+    // state.offset += 0.8;
+    // clearCanvas.call(ctx, CNAVAS_SIZE);
+    // // renderBackground();
+    // state.ripples.forEach((ripple) => {
+    //   ripple.canvas.render(renderRipple, { ...ripple, offset: state.offset });
+    // });
+    // state.ripples.forEach((ripple, index) => {
+    //   // ctx.translate(CANVAS_CENTER.x, CANVAS_CENTER.y);
+    //   // ctx.rotate(state.ripples[index].rotateSpeed);
+    //   // ctx.translate(-CANVAS_CENTER.x, -CANVAS_CENTER.y);
+    //   ctx.drawImage(ripple.canvas, 0, 0);
+    //   // renderRipple.call(ctx, ripple);
+    // });
+
     clearCanvas.call(ctx, CNAVAS_SIZE);
     // renderBackground();
-    state.ripples.forEach((ripple, index) => {
-      ctx.translate(CANVAS_CENTER.x, CANVAS_CENTER.y);
-      ctx.rotate(state.ripples[index].rotateSpeed);
-      ctx.translate(-CANVAS_CENTER.x, -CANVAS_CENTER.y);
-      ctx.drawImage(ripple.canvas, 0, 0);
-      // renderRipple.call(ctx, ripple);
-    });
+    // state.ripples.forEach((ripple, index) => {
+    //   // ctx.translate(CANVAS_CENTER.x, CANVAS_CENTER.y);
+    //   // ctx.rotate(state.ripples[index].rotateSpeed);
+    //   // ctx.translate(-CANVAS_CENTER.x, -CANVAS_CENTER.y);
+    //   renderRipple.call(ctx, ripple);
+    // });
   }
+
+  // setInterval(render, 2000);
 
   loop(render);
 
-  console.log(CNAVAS_SIZE, CANVAS_CENTER, state);
+  // console.log(CNAVAS_SIZE, CANVAS_CENTER, state);
 }
 
 export default main;
