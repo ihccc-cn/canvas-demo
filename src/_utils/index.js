@@ -10,5 +10,4 @@ export { default as Size } from "./Size";
 export { default as trig } from "./trig";
 export { default as loop } from "./loop";
 
-export { default as Control } from "./Control";
 export { default as m } from "./m";

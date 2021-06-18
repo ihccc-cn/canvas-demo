@@ -1,95 +1,10 @@
-function Input(opts) {
-  const { label, name, value = "", max = 255 } = opts;
-
-  const dom = [
-    "<div class='field-item'>",
-    "<label class='field-wrapper full'>",
-    label ? `<span>${label}</span>` : "",
-    `
-      <input
-        class='input'
-        type='text'
-        name='${name}'
-        value='${value}'
-        max='${max}'
-      />
-    `,
-    "</label>",
-    "</div>",
-  ].join("");
-
-  return { dom };
-}
-
-function Radio(opts) {
-  const { label, name, value, options } = opts;
-
-  const dom = [
-    "<div class='field-item'>",
-    label ? `<label for='${name}'>${label}</label>` : "",
-    options
-      .map(
-        (item) =>
-          `<label class='field-wrapper'>
-            <input
-              class='input'
-              type='radio' 
-              name='${name}'
-              value='${item.value}' 
-              ${value === item.value ? "checked" : ""}
-            />${item.label}</label>`
-      )
-      .join(""),
-    "</div>",
-  ].join("");
-
-  return { dom };
-}
-
-function Silder(opts) {
-  const { label, name, value = 0, min = 0, max = 10, step = 1 } = opts;
-
-  const dom = [
-    "<div class='field-item'>",
-    "<label class='field-wrapper full'>",
-    label ? `<span>${label}</span>` : "",
-    `
-      <input 
-        class='input'
-        type='range'
-        name='${name}'
-        value='${value}'
-        min='${min}'
-        max='${max}'
-        step='${step}'
-      /><b>${value}</b>
-    `,
-    "</label>",
-    "</div>",
-  ].join("");
-
-  return { dom };
-}
-
-function Group(title, components) {
-  const dom = [
-    "<div class='field-group soft inset' style=''>",
-    components.map((item) => item.dom).join(""),
-    "</div>",
-  ].join("");
-  return { title, dom };
-}
-
-function Content(opts) {
-  const { label, children } = opts;
-  const dom = [
-    "<div class='field-item'>",
-    label ? `<span>${label}</span>` : "",
-    children,
-    "</div>",
-  ].join("");
-  return { dom };
-}
+import Content from "./Content";
+import Group from "./Group";
+import Input from "./Input";
+import Color from "./Color";
+import Radio from "./Radio";
+import Silder from "./Silder";
+import "./control.css";
 
 function appendTo(target) {
   Control.target = target;
@@ -104,6 +19,7 @@ class Control {
   static Content = Content;
   static Group = Group;
   static Input = Input;
+  static Color = Color;
   static Radio = Radio;
   static Silder = Silder;
   static appendTo = appendTo;
@@ -151,9 +67,7 @@ class Control {
   }
 
   renderGroupTitle = (item, index) =>
-    `<div class='field-group-title ${index === 0 ? "active soft inset" : ""}'>${
-      item.title
-    }</div>`;
+    `<div class='field-group-title ${index === 0 ? "active soft inset" : ""}'>${item.title}</div>`;
 
   render() {
     const controlsDom = [
@@ -191,8 +105,7 @@ class Control {
       };
     });
 
-    const groupTitle =
-      this.container.getElementsByClassName("field-group-title");
+    const groupTitle = this.container.getElementsByClassName("field-group-title");
     const groupBody = this.container.getElementsByClassName("field-group");
 
     forEach(groupTitle, function (item, index) {

@@ -9,7 +9,19 @@ function createOffScreenCanvas(size) {
 
   canvas.render = function render(fn, ...args) {
     clearCanvas.call(context, size);
-    typeof fn === "function" && fn.call(context, ...args);
+    if (typeof fn === "function") {
+      fn.call(context, ...args);
+      canvas._fn = {
+        method: fn,
+        args: args,
+      };
+    }
+  };
+
+  canvas.update = function update() {
+    if (typeof canvas._fn === "object") {
+      canvas._fn.method.call(context, ...canvas._fn.args);
+    }
   };
 
   return canvas;

@@ -1,6 +1,6 @@
-import { Control } from "../../_utils";
+import { Control } from "../../components";
 
-const { Radio, Silder, Group } = Control;
+const { Radio, Silder, Color, Group } = Control;
 
 function getControlPanel() {
   return new Control([
@@ -12,7 +12,7 @@ function getControlPanel() {
         { label: "y=Acos(ωx+φ)+k", value: "cos" },
       ],
     }),
-    Group("调整参数", [
+    Group("函数参数", [
       Silder({
         label: "A：",
         name: "a",
@@ -51,6 +51,18 @@ function getControlPanel() {
         min: 0,
         max: 10,
         step: 0.5,
+      }),
+    ]),
+    Group("线参数", [
+      Silder({
+        label: "粗细：",
+        name: "line_width",
+        min: 1,
+        max: 10,
+      }),
+      Color({
+        label: "颜色：",
+        name: "line_color",
       }),
     ]),
     Group("坐标系", [

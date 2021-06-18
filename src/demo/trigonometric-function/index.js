@@ -23,7 +23,13 @@ function main() {
     zoom_y: 16,
     x0: -2,
     x1: 2,
+    line_width: 2,
+    line_color: "#2196f3",
   };
+
+  ctx.strokeStyle = state.line_color;
+  ctx.lineWidth = state.line_width;
+  ctx.lineJoin = "round";
 
   // 创建坐标系
   const CoorSystemCanvas = createOffScreenCanvas(CNAVAS_SIZE);
@@ -42,8 +48,6 @@ function main() {
   function renderFunc() {
     ctx.translate(CANVAS_CENTER.x, CANVAS_CENTER.y);
     ctx.save();
-    ctx.strokeStyle = "#f00";
-    ctx.lineWidth = 4;
     ctx.beginPath();
     for (let i = state.x0 * Math.PI; i <= state.x1 * Math.PI; i += count) {
       let x = i;
@@ -72,15 +76,19 @@ function main() {
   getControlPanel()
     .setValue(state)
     .onChange((name, value) => {
-      if (name === "method") {
+      if (name === "line_color") {
+        state.line_color = value;
+        ctx.strokeStyle = state.line_color;
+      } else if (name === "method") {
         state[name] = value;
         state.x1 = state.x0;
         new TWEEN.Tween(state).easing(TWEEN.Easing.Quadratic.InOut).to({ x1: 2 }, 1500).start();
       } else {
-        new TWEEN.Tween(state)
+        let tween = new TWEEN.Tween(state)
           .easing(TWEEN.Easing.Quadratic.InOut)
           .to({ [name]: +value }, 1500)
           .start();
+        if (name === "line_width") tween.onUpdate(() => (ctx.lineWidth = state.line_width));
       }
     });
 }
