@@ -1,3 +1,4 @@
+import { Circle } from "../../geometry";
 import { initCanvas, clearCanvas, trig, loop } from "../../_utils";
 
 const sin = Math.sin;
@@ -26,13 +27,15 @@ function main() {
   let θ = ONECYCLE / cycleSize; // 每个粒子间隔角度
   let offsetAngel = 1; // 粒子旋转偏移量
 
+  let circle = new Circle(CANVAS_CENTER, radius);
+
   function renderCircle() {
     θ = θ % ONECYCLE;
     for (let i = 0; i < particleSize; i++) {
       const cdx = Math.floor(i / cycleSize); // 当前圆环的索引
       const pdx = i % cycleSize; // 当前圆环内粒子的索引
 
-      let circleRadius = radius + circleDistance * cdx; // 当前圆环半径
+      circle.setRadius(radius + circleDistance * cdx); // 当前圆环半径
 
       let r = sr; // 当前粒子半径
 
@@ -40,8 +43,7 @@ function main() {
         trig.sin({ A: sr, W: Math.PI * 0.06 + cdx / 2000, X: offsetAngel * 6 + pdx }, 0)
       );
 
-      let x = CANVAS_CENTER.x + circleRadius * cos(θ * pdx + offsetAngel);
-      let y = CANVAS_CENTER.y + circleRadius * sin(θ * pdx + offsetAngel);
+      let { x, y } = circle.getPointInBoundary(θ * pdx + offsetAngel);
 
       // x = trig.sin({ A: x, W: ONECYCLE / pdx / 6, X: offsetAngel, D: 0 }, 0);
       // y = trig.cos({ A: y, W: ONECYCLE / pdx / 6, X: offsetAngel, D: 0 }, 0);
