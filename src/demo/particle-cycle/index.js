@@ -1,11 +1,10 @@
 import { Circle } from "../../geometry";
 import { initCanvas, clearCanvas, trig, loop } from "../../_utils";
 
-const sin = Math.sin;
-const cos = Math.cos;
-
 function main() {
-  const { CNAVAS_SIZE, CANVAS_CENTER, ctx } = initCanvas({ title: "粒子圆环效果" });
+  const { CNAVAS_SIZE, CANVAS_CENTER, ctx } = initCanvas({
+    title: "粒子圆环效果",
+  });
 
   const ONECYCLE = Math.PI * 2; // 一个周期 360 度 即 2π
 
@@ -40,13 +39,17 @@ function main() {
       let r = sr; // 当前粒子半径
 
       r = Math.abs(
-        trig.sin({ A: sr, W: Math.PI * 0.06 + cdx / 2000, X: offsetAngel * 6 + pdx }, 0)
+        trig.sin(
+          offsetAngel * 6 + pdx,
+          { A: sr, W: Math.PI * 0.06 + cdx / 2000 },
+          0
+        )
       );
 
       let { x, y } = circle.getPointInBoundary(θ * pdx + offsetAngel);
 
-      // x = trig.sin({ A: x, W: ONECYCLE / pdx / 6, X: offsetAngel, D: 0 }, 0);
-      // y = trig.cos({ A: y, W: ONECYCLE / pdx / 6, X: offsetAngel, D: 0 }, 0);
+      // x = trig.sin(offsetAngel, { A: x, W: ONECYCLE / pdx / 6, D: 0 }, 0);
+      // y = trig.cos(offsetAngel, { A: y, W: ONECYCLE / pdx / 6, D: 0 }, 0);
 
       if (r > 0) {
         ctx.fillStyle = `rgb(${x}, ${100}, ${y})`;
