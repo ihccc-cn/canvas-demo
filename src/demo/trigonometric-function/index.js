@@ -52,7 +52,8 @@ function main() {
     for (let i = state.x0 * Math.PI; i <= state.x1 * Math.PI; i += count) {
       let x = i;
       let y = trig[state.method](
-        { A: state.a, W: state.w, X: x, D: state.d * Math.PI, K: state.k },
+        x,
+        { A: state.a, W: state.w, D: state.d * Math.PI, K: state.k },
         2
       );
       ctx[i === state.x0 * Math.PI ? "moveTo" : "lineTo"](to(x, state.zoom_x), to(y, state.zoom_y));

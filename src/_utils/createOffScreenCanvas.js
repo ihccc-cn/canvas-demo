@@ -8,8 +8,8 @@ function createOffScreenCanvas(size) {
   const context = canvas.getContext("2d");
 
   canvas.render = function render(fn, ...args) {
-    clearCanvas.call(context, size);
     if (typeof fn === "function") {
+      clearCanvas.call(context, size);
       fn.call(context, ...args);
       canvas._fn = {
         method: fn,
@@ -20,6 +20,7 @@ function createOffScreenCanvas(size) {
 
   canvas.update = function update() {
     if (typeof canvas._fn === "object") {
+      clearCanvas.call(context, size);
       canvas._fn.method.call(context, ...canvas._fn.args);
     }
   };

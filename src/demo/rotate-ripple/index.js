@@ -1,126 +1,92 @@
-import { Circle } from "../../geometry";
-import { initCanvas, clearCanvas, trig, m, loop } from "../../_utils";
+import TWEEN from "@tweenjs/tween.js";
+import { Circle, Point } from "../../geometry";
+import { initCanvas, createOffScreenCanvas, clearCanvas, trig, m, loop } from "../../_utils";
+import ripples from "./ripples";
 
 const ONECYCLE = 2 * Math.PI;
+
+class ParticleCycle {
+  constructor({ center = new Point(0, 0), radius = 100, delay = 0 }) {
+    this.circle = new Circle(center, radius);
+    this.delay = delay;
+    this.startIndex = -1;
+    this.range = 2;
+    this.offset = 0;
+    this.count = ONECYCLE / 180;
+  }
+  render(ctx) {
+    for (let index = 0; index < 180; index += 1) {
+      const angle = this.count * index;
+      let { x, y } = this.circle.getPointInBoundary(angle);
+      const i = index - this.startIndex;
+
+      if (
+        this.offset > 0 &&
+        this.startIndex > 0 &&
+        index > this.startIndex &&
+        index < this.startIndex + ONECYCLE / this.range / 2 / this.count
+      ) {
+        const offsetY = trig.sin(this.count * i, {
+          A: this.offset,
+          W: this.range,
+          D: 0,
+          // K: this.offset,
+        });
+        // console.log(offsetY);
+        x += offsetY * Math.cos(angle);
+        y += offsetY * Math.sin(angle);
+      }
+
+      ctx.fillRect(x, y, 2, 2);
+    }
+  }
+}
 
 function main() {
   const { CNAVAS_SIZE, CANVAS_CENTER, ctx } = initCanvas({
     title: "圆环粒子效果",
   });
 
-  /**
-   * 构想：
-   * 将指定数量粒子根据三角函数曲线，进行移动，并且旋转
-   * 1、在圆上做正、余弦运动，求 x 和 y 坐标
-   *    a、获取圆上的点
-   *    b、以正、余弦曲线作为偏移量来偏移圆上的点
-   * 2、限制粒子在圆外运动，如果运动到圆内，将 A 值调整为原来的 1/4，运动到圆外，恢复
-   * 3、根据周期性调整 A 值，每过1/4个周期修改一次A值
-   * 4、根据当前 x、y的值，修改粒子的颜色
-   * 5、在限制的界限上绘制多个略有透明的白色阴影圆环，增加光效
-   */
-
-  const circle = new Circle(CANVAS_CENTER, 100); // 限制圆形边界
   const state = {
-    number: 600, // 总计粒子数量
-    times: 3, // 曲线在圆上的周期范围
-    circle,
-    count: ONECYCLE / 360, // 增量
+    number: 10, // 圆环数量
   };
 
-  console.log(state);
   ctx.fillStyle = "#fff";
   ctx.lineWidth = 1;
   ctx.strokeStyle = "#fff";
-  let k = 0;
 
-  function renderOneRipple({ a = 54, w = 8, r = 255, b = 255 }) {
-    let offset = 0;
+  let one = "123456789".split("").map(() => new ParticleCycle({ center: CANVAS_CENTER }));
 
-    // ρ = sin(9 * θ) / 3 + A
-    // ρ = a * sin(k * θ) + A
-
-    for (let i = 0; i < ONECYCLE; i += state.count) {
-      let { x, y } = circle.getPointInBoundary(i);
-
-      ctx.fillStyle = `rgba(${y - k}, 0, ${x + k}, ${1 - k / 100})`;
-
-      offset = trig.sin(((i / state.count) * ONECYCLE) / 360, {
-        A: offset < 0 ? a / 2 : a,
-        W: w,
-        D: 0,
-        K: k,
-      });
-
-      x += offset * Math.cos(i);
-      y += offset * Math.sin(i);
-
-      ctx.fillRect(x, y, 2, 2);
-    }
+  function create() {
+    const oneState = { offset: 0 };
+    const startIndex = m.random(0, 180);
+    one.map((item, index) => {
+      item.startIndex = startIndex;
+      // one.offset = m.random(20, 50);
+      new TWEEN.Tween(oneState)
+        .easing(TWEEN.Easing.Quadratic.InOut)
+        .to({ offset: m.random(100, 200) }, 1000)
+        .repeat(1)
+        .yoyo(true)
+        .delay(50 * index)
+        .onUpdate(() => {
+          item.offset = oneState.offset;
+        })
+        .start();
+    });
   }
 
-  const ripples = [
-    {
-      a: m.random(32, 64),
-      w: m.random(6, 8),
-      r: m.random(150, 255),
-      b: m.random(150, 255),
-    },
-    {
-      a: m.random(32, 64),
-      w: m.random(6, 8),
-      r: m.random(150, 255),
-      b: m.random(150, 255),
-    },
-    {
-      a: m.random(32, 64),
-      w: m.random(6, 8),
-      r: m.random(150, 255),
-      b: m.random(150, 255),
-    },
-    {
-      a: m.random(32, 64),
-      w: m.random(6, 8),
-      r: m.random(150, 255),
-      b: m.random(150, 255),
-    },
-    {
-      a: m.random(32, 64),
-      w: m.random(6, 8),
-      r: m.random(150, 255),
-      b: m.random(150, 255),
-    },
-    {
-      a: m.random(32, 64),
-      w: m.random(6, 8),
-      r: m.random(150, 255),
-      b: m.random(150, 255),
-    },
-    {
-      a: m.random(32, 64),
-      w: m.random(6, 8),
-      r: m.random(150, 255),
-      b: m.random(150, 255),
-    },
-  ];
-
-  const render = function () {
-    if (k++ > circle.radius) k = 0;
+  const render = function (tick) {
+    TWEEN.update(tick);
     clearCanvas.call(ctx, CNAVAS_SIZE);
-    // 先绘制一个圆环用于标记位置
-    // ctx.beginPath();
-    // ctx.arc(circle.center.x, circle.center.y, circle.radius, 0, ONECYCLE);
-    // ctx.closePath();
-    // ctx.stroke();
-    ctx.translate(circle.center.x, circle.center.y);
-    ctx.rotate(ONECYCLE / 360);
-    ctx.translate(-circle.center.x, -circle.center.y);
-    ripples.forEach(renderOneRipple);
-    // renderOneRipple({});
+    one.map((item) => item.render(ctx));
   };
 
   // render();
   // setInterval(render, 1000);
+
+  create();
+  setInterval(create, 4000);
 
   loop(render);
 }
