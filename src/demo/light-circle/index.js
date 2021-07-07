@@ -1,5 +1,5 @@
 import { Circle } from "../../geometry";
-import { initCanvas, clearCanvas, trig, loop } from "../../_utils";
+import { initCanvas, clearCanvas, loop } from "../../_utils";
 import getControlPanel from "./getControlPanel";
 
 const ONECYCLE = Math.PI * 2; // 一个周期 360 度 即 2π
@@ -18,26 +18,26 @@ function main() {
       {
         color: "#ffffff",
         w: 16,
-        blur: 64,
-        sc: "#ffffff",
+        blur: 12,
+        sc: "#00ffd5",
       },
       {
         color: "#ffffff",
         w: 16,
-        blur: 32,
-        sc: "#42ffe0",
+        blur: 12,
+        sc: "#00d9ff",
       },
       {
         color: "#ffffff",
         w: 8,
-        blur: 16,
-        sc: "#00ff7b",
+        blur: 40,
+        sc: "#0011ff",
       },
       {
         color: "#ffffff",
         w: 8,
-        blur: 8,
-        sc: "#000000",
+        blur: 40,
+        sc: "#ff00e1",
       },
     ],
   };
@@ -55,6 +55,7 @@ function main() {
   }) {
     ctx.save();
     ctx.strokeStyle = c;
+    ctx.fillStyle = c;
     ctx.lineWidth = w;
     if (g !== state.gco) ctx.globalCompositeOperation = g;
     if (blur > 0) {
@@ -63,6 +64,7 @@ function main() {
     }
     ctx.beginPath();
     ctx.arc(circle.center.x, circle.center.y, circle.radius, 0, ONECYCLE);
+    ctx.fillRect(circle.center.x - w / 2, circle.center.y - w / 2, w, w);
     ctx.closePath();
     ctx.stroke();
     ctx.restore();

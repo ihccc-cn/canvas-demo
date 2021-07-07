@@ -9,16 +9,16 @@ Control.appendTo(root);
 const name = window.location.pathname.split("/")[1].replace("-", "_");
 
 function renderRouteItem(item) {
-  return `<div class="menu-item"><a href='${item.path}'>${item.name || "未知名称"}</a></div>`;
+  return `<div class="menu-item"><a href='${item.path}'>${item.title || "未知名称"}</a></div>`;
 }
 
 if (!!name && demo.hasOwnProperty(name)) {
   root.innerHTML = `
   <h4 class="soft">
     <span id="title">canvas - demo</span>
-    <a class="close" href="/">❌</a>
+    <a class="bar-btn" href="/" title="退出">❌</a>
   </h4>
-  <div class="card soft">
+  <div id="panel" class="card soft">
     <canvas id="canvas"></canvas>
   </div>
   `;
@@ -29,8 +29,8 @@ if (!!name && demo.hasOwnProperty(name)) {
     routes
       .map((item) => {
         if (typeof item === "string") {
-          const [name, path] = item.split(":");
-          return renderRouteItem({ name, path });
+          const [title, path] = item.split(":");
+          return renderRouteItem({ title, path });
         }
         return renderRouteItem(item);
       })

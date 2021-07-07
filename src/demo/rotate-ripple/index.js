@@ -55,7 +55,7 @@ function main() {
   ctx.lineWidth = 1;
   ctx.strokeStyle = "#fff";
 
-  let one = "123456789".split("").map(() => new ParticleCycle({ center: CANVAS_CENTER }));
+  let one = new Array(9).fill("").map(() => new ParticleCycle({ center: CANVAS_CENTER }));
 
   function create() {
     const oneState = { offset: 0 };
