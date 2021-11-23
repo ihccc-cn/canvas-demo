@@ -1,6 +1,7 @@
 import TWEEN from "@tweenjs/tween.js";
 import coorSystem from "./coorSystem";
 import getControlPanel from "./getControlPanel";
+import { stats } from "../../components/Stats";
 import { initCanvas, createOffScreenCanvas, clearCanvas, trig, loop } from "../../_utils";
 
 function to(number, s) {
@@ -65,11 +66,13 @@ function main() {
   }
 
   function render(tick) {
+    stats.begin();
     clearCanvas.call(ctx, CNAVAS_SIZE);
     renderCoorSystem();
     renderFunc();
 
     TWEEN.update(tick);
+    stats.end();
   }
 
   loop(render);

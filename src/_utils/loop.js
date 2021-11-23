@@ -9,11 +9,22 @@ export const requestAnimationFrame = (function () {
   );
 })();
 
-const loop = function (func, _t) {
-  func(_t);
-  requestAnimationFrame(function (tick) {
-    loop(func, tick);
-  });
+export const loop = function (func) {
+  if (typeof func !== "function") return;
+  let raf = null;
+
+  function animate(tick) {
+    func(tick);
+    raf = requestAnimationFrame(animate);
+  }
+
+  function cancel() {
+    cancelAnimationFrame(raf);
+  }
+
+  animate();
+
+  return cancel;
 };
 
 loop.requestAnimationFrame = requestAnimationFrame;

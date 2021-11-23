@@ -1,5 +1,6 @@
 import TWEEN from "@tweenjs/tween.js";
 import { Circle, Point } from "../../geometry";
+import { stats } from "../../components/Stats";
 import { initCanvas, createOffScreenCanvas, clearCanvas, trig, m, loop } from "../../_utils";
 import ripples from "./ripples";
 
@@ -77,9 +78,11 @@ function main() {
   }
 
   const render = function (tick) {
+    stats.begin();
     TWEEN.update(tick);
     clearCanvas.call(ctx, CNAVAS_SIZE);
     one.map((item) => item.render(ctx));
+    stats.end();
   };
 
   // render();

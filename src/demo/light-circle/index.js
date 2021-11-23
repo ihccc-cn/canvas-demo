@@ -1,4 +1,5 @@
 import { Circle } from "../../geometry";
+import { stats } from "../../components/Stats";
 import { initCanvas, clearCanvas, loop } from "../../_utils";
 import getControlPanel from "./getControlPanel";
 
@@ -71,8 +72,10 @@ function main() {
   }
 
   function render() {
+    stats.begin();
     clearCanvas.call(ctx, CNAVAS_SIZE);
     state.props.forEach(renderCircle);
+    stats.end();
   }
 
   loop(render);

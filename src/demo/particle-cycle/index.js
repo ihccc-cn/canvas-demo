@@ -1,4 +1,5 @@
 import { Circle } from "../../geometry";
+import { stats } from "../../components/Stats";
 import { initCanvas, clearCanvas, trig, loop } from "../../_utils";
 
 function main() {
@@ -38,13 +39,7 @@ function main() {
 
       let r = sr; // 当前粒子半径
 
-      r = Math.abs(
-        trig.sin(
-          offsetAngel * 6 + pdx,
-          { A: sr, W: Math.PI * 0.06 + cdx / 2000 },
-          0
-        )
-      );
+      r = Math.abs(trig.sin(offsetAngel * 6 + pdx, { A: sr, W: Math.PI * 0.06 + cdx / 2000 }, 0));
 
       let { x, y } = circle.getPointInBoundary(θ * pdx + offsetAngel);
 
@@ -60,9 +55,10 @@ function main() {
 
   function render() {
     offsetAngel += rotateSpeed;
-
+    stats.begin();
     clearCanvas.call(ctx, CNAVAS_SIZE);
     renderCircle();
+    stats.end();
   }
 
   loop(render);

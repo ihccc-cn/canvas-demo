@@ -1,6 +1,8 @@
 import * as demo from "./demo";
 import routes from "./routes";
-import { Control } from "./components";
+import { initStats, Control } from "./components";
+
+initStats();
 
 const root = document.getElementById("root");
 

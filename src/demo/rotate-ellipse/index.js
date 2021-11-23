@@ -1,6 +1,6 @@
-import { Rect, Point, Ellipse } from "../../geometry";
+import { stats } from "../../components/Stats";
+import { Point, Ellipse } from "../../geometry";
 import { initCanvas, clearCanvas, loop, m } from "../../_utils";
-// import getControlPanel from "./getControlPanel";
 
 const ONECYCLE = Math.PI * 2; // 一个周期 360 度 即 2π
 
@@ -28,7 +28,7 @@ function main() {
     props: [],
   };
 
-  function createOneEllipse({ offsetY = 0, scale = 1, dash = false, ...rest }) {
+  function createOneEllipse({ offsetY = 0, scale = 1, dash = false, rotate = 0, ...rest }) {
     return {
       ellipse: new Ellipse(
         new Point(CANVAS_CENTER.x, CANVAS_CENTER.y + 160 + offsetY),
@@ -36,29 +36,26 @@ function main() {
         40 * scale
       ),
       dash: dash ? dash.map((i) => i * scale) : dash,
-      rotate: dash ? (m.random(0, 2) ? -1 : 1) : 0,
+      rotate: rotate ? rotate : dash ? (m.random(0, 2) ? -1 : 1) : 0,
       ...rest,
     };
   }
 
+  const grd = ctx.createLinearGradient(0, 0, CNAVAS_SIZE.width, 0);
+  grd.addColorStop(0, "#dc26e280");
+  grd.addColorStop(0.5, "#00d8ffaa");
+  grd.addColorStop(1, "#233cff80");
+  ctx.strokeStyle = grd;
   ctx.globalCompositeOperation = "lighter";
 
   let offset = 0;
   let step = 1;
 
-  function renderAnim({
-    ellipse,
-    c = "#ff3fff",
-    w = 8,
-    dash = false,
-    rotate = 0,
-    blur = 0,
-    sc = "#fff",
-  }) {
+  function renderAnim({ ellipse, w = 2, dash = false, rotate = 0, blur = 0, sc = "#fff" }) {
     if (!ellipse) return;
     ctx.save();
-    ctx.strokeStyle = c;
-    ctx.lineWidth = w;
+
+    if (ctx.lineWidth !== w) ctx.lineWidth = w;
     if (dash) ctx.setLineDash(dash);
     if (rotate === 1) {
       ctx.lineDashOffset = offset;
@@ -75,48 +72,49 @@ function main() {
 
   state.props = [
     // 一层
-    createOneEllipse({ scale: 0.5, c: "#0b27ff73" }),
-    createOneEllipse({ scale: 0.55, c: "#0b27ff73" }),
-    createOneEllipse({ w: 20, scale: 0.6, dash: [4, 6], c: "#0b27ff99" }),
-    createOneEllipse({ w: 20, scale: 0.7, dash: [4, 6], c: "#0b27ff99" }),
-    createOneEllipse({ w: 20, scale: 0.9, dash: [4, 6], c: "#0b27ffd6", blur: 10 }),
-    createOneEllipse({ w: 20, scale: 0.9, dash: [4, 6], c: "#0b27ffd6", blur: 10 }),
-    createOneEllipse({ w: 2, c: "#0b27ffd6" }),
+    createOneEllipse({ scale: 0.5 }),
+    createOneEllipse({ scale: 0.55 }),
+    createOneEllipse({ w: 20, scale: 0.6, dash: [4, 6] }),
+    createOneEllipse({ w: 20, scale: 0.7, dash: [4, 6] }),
+    createOneEllipse({ w: 20, scale: 0.9, dash: [4, 6], blur: 10 }),
+    createOneEllipse({ w: 20, scale: 0.9, dash: [4, 6], blur: 10 }),
+    createOneEllipse({ w: 2 }),
     // 二层
-    createOneEllipse({ w: 2, offsetY: -12, scale: 0.5, c: "#0b27ff73" }),
-    createOneEllipse({ w: 2, offsetY: -12, scale: 0.51, c: "#0b27ff73" }),
-    createOneEllipse({ w: 2, offsetY: -12, scale: 0.52, c: "#0b27ff73" }),
-    createOneEllipse({ offsetY: -12, scale: 0.65, dash: [8, 8], c: "#0b27ff99" }),
-    createOneEllipse({ offsetY: -12, scale: 0.8, dash: [280, 180], c: "#0b27ff99" }),
-    createOneEllipse({ offsetY: -12, scale: 1.2, dash: [280, 180], c: "#444", blur: 10 }),
-    createOneEllipse({ offsetY: -12, scale: 1.2, dash: [280, 180], c: "#0b27ffd6", blur: 10 }),
-    createOneEllipse({ offsetY: -12, scale: 1.2, dash: [280, 180], c: "#0b27ffd6", blur: 10 }),
+    createOneEllipse({ w: 2, offsetY: -12, scale: 0.5 }),
+    createOneEllipse({ w: 2, offsetY: -12, scale: 0.51 }),
+    createOneEllipse({ w: 2, offsetY: -12, scale: 0.52 }),
+    createOneEllipse({ offsetY: -12, scale: 0.65, dash: [8, 8] }),
+    createOneEllipse({ offsetY: -12, scale: 0.8, dash: [280, 140] }),
+    createOneEllipse({ w: 8, offsetY: -12, scale: 1.2, dash: [280, 140], blur: 10, rotate: 1 }),
+    createOneEllipse({ w: 8, offsetY: -12, scale: 1.2, dash: [280, 140], blur: 10, rotate: 1 }),
+    createOneEllipse({ w: 8, offsetY: -12, scale: 1.2, dash: [280, 140], blur: 10, rotate: 1 }),
     // 三层
-    createOneEllipse({ offsetY: -48, scale: 0.5, dash: [280, 180], c: "#0b27ff73" }),
-    createOneEllipse({ offsetY: -48, scale: 0.54, dash: [280, 180], c: "#0b27ff73" }),
-    createOneEllipse({ offsetY: -48, scale: 0.8, dash: [280, 180], c: "#0b27ff99" }),
+    createOneEllipse({ offsetY: -48, scale: 0.5, dash: [280, 140] }),
+    createOneEllipse({ offsetY: -48, scale: 0.54, dash: [280, 140] }),
+    createOneEllipse({ offsetY: -48, scale: 0.8, dash: [280, 140] }),
     // 四层
-    createOneEllipse({ offsetY: -60, scale: 0.5, c: "#0b27ff73" }),
-    createOneEllipse({ w: 2, offsetY: -60, scale: 0.55, c: "#0b27ff73" }),
-    createOneEllipse({ w: 2, offsetY: -60, scale: 0.56, c: "#0b27ff99" }),
-    createOneEllipse({ w: 4, offsetY: -60, scale: 0.6, dash: [280, 180], c: "#0b27ff99" }),
-    createOneEllipse({ w: 2, offsetY: -60, scale: 0.61, c: "#0b27ff99" }),
-    createOneEllipse({ w: 4, offsetY: -60, scale: 0.65, dash: [280, 180], c: "#0b27ff99" }),
-    createOneEllipse({ w: 4, offsetY: -60, scale: 0.68, dash: [16, 8], c: "#0b27ff99" }),
-    createOneEllipse({ w: 2, offsetY: -60, scale: 0.8, c: "#444", blur: 10 }),
-    createOneEllipse({ w: 2, offsetY: -60, scale: 0.8, c: "#0b27ffd6", blur: 10 }),
-    createOneEllipse({ w: 2, offsetY: -60, scale: 0.8, c: "#0b27ffd6", blur: 10 }),
+    createOneEllipse({ offsetY: -60, scale: 0.5 }),
+    createOneEllipse({ w: 2, offsetY: -60, scale: 0.55 }),
+    createOneEllipse({ w: 2, offsetY: -60, scale: 0.56 }),
+    createOneEllipse({ w: 4, offsetY: -60, scale: 0.6, dash: [280, 140] }),
+    createOneEllipse({ w: 2, offsetY: -60, scale: 0.61 }),
+    createOneEllipse({ w: 4, offsetY: -60, scale: 0.65, dash: [280, 140] }),
+    createOneEllipse({ w: 4, offsetY: -60, scale: 0.68, dash: [16, 8] }),
+    createOneEllipse({ w: 2, offsetY: -60, scale: 0.8, blur: 10 }),
+    createOneEllipse({ w: 8, offsetY: -60, scale: 0.8, blur: 10 }),
+    createOneEllipse({ w: 8, offsetY: -60, scale: 0.8, blur: 10 }),
   ];
 
   function render() {
     offset += step;
-    if (offset > 1024) step *= -1;
+    if (offset > 1024 || offset < 0) step *= -1;
+    stats.begin();
     clearCanvas.call(ctx, CNAVAS_SIZE);
     state.props.forEach(renderAnim);
+    stats.end();
   }
 
-  loop(render);
-  // render();
+  return loop(render);
 }
 
 export default main;
